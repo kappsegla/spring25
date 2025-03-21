@@ -40,4 +40,13 @@ class HelloControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()", is(1)));
     }
+
+    @Test
+    void hello() throws Exception {
+        mockMvc.perform(get("/hello"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8"))
+                .andExpect(content().string(containsString("Hello, World!")));
+    }
+
 }
