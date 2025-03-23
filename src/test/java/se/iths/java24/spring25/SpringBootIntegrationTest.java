@@ -4,15 +4,16 @@ package se.iths.java24.spring25;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import se.iths.java24.spring25.config.Config;
 import se.iths.java24.spring25.domain.entity.Playground;
 import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 
@@ -21,10 +22,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.main.allow-bean-definition-overriding=true")
 @AutoConfigureMockMvc
 @Testcontainers
-public class SpringBootIntegrationTest {
+//@ActiveProfiles("test")
+class SpringBootIntegrationTest {
 
     @Container
     @ServiceConnection
@@ -32,9 +34,6 @@ public class SpringBootIntegrationTest {
 
     @Autowired
     MockMvc mockMvc;
-
-    @MockitoBean
-    Config config;
 
     @Autowired
     PlaygroundRepository playgroundRepository;
@@ -60,5 +59,15 @@ public class SpringBootIntegrationTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()", is(2)));
 
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        CommandLineRunner runner() {
+            return args -> {
+                // do nothing
+            };
+        }
     }
 }
