@@ -1,6 +1,9 @@
 package se.iths.java24.spring25.config;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -9,6 +12,7 @@ import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 
 @Configuration
 @Profile("!test")
+@EnableCaching
 public class Config {
     @Bean
     CommandLineRunner runner(PlaygroundRepository repository) {
