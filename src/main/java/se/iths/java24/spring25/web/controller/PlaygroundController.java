@@ -44,6 +44,6 @@ public class PlaygroundController {
         redirectAttributes.addFlashAttribute("success", true);
         redirectAttributes.addFlashAttribute("playground", new Playground());
         
-        return "redirect:/playgrounds/view";
+        return "redirect:/playgrounds/add";
     }
 }
