@@ -1,11 +1,9 @@
 package se.iths.java24.spring25;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import se.iths.java24.spring25.domain.PlaygroundService;
 import se.iths.java24.spring25.domain.entity.Playground;
 
