@@ -14,13 +14,11 @@ import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 import java.util.List;
 
 @Service
-//@Transactional
+@Transactional
 public class PlaygroundService {
     Logger log = LoggerFactory.getLogger(PlaygroundService.class);
 
     PlaygroundRepository playgroundRepository;
-    @Autowired
-    CacheManager cacheManager;
 
     public PlaygroundService(PlaygroundRepository playgroundRepository) {
         this.playgroundRepository = playgroundRepository;
