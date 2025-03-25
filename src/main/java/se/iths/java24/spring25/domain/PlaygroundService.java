@@ -28,4 +28,8 @@ public class PlaygroundService {
             playgroundRepository.save(playground);
         }
     }
+    
+    public Playground addPlayground(Playground playground) {
+        return playgroundRepository.save(playground);
+    }
 }

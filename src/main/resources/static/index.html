@@ -6,6 +6,15 @@
 </head>
 <body>
 <h1>Hello from Spring Boot</h1>
+<p>I'm a paragraph</p>
+<button onclick="addParagraph()">Add Paragraph</button>
 
+<script>
+    function addParagraph() {
+        const newParagraph = document.createElement('p');
+        newParagraph.textContent = 'This is a newly added paragraph!';
+        document.body.appendChild(newParagraph);
+    }
+</script>
 </body>
 </html>
