@@ -15,6 +15,13 @@ public class Playground {
 
     String name;
 
+    public Playground() {
+    }
+
+    public Playground(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return this.id;
     }

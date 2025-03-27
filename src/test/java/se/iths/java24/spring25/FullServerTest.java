@@ -54,4 +54,5 @@ public class FullServerTest {
         assertThat(page.getElementById("header2").getTextContent()).isEqualTo("Smaller heading...");
     }
 
+
 }
