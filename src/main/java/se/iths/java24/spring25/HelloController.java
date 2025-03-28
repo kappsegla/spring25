@@ -25,9 +25,10 @@ public class HelloController {
         return "hello";
     }
 
-    @GetMapping("/playgrounds")
+    @GetMapping("/api/playgrounds")
     @ResponseBody
     List<Playground> playground(Model model){
         return playgroundService.getAllPlaygrounds();
     }
+
 }

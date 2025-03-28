@@ -12,6 +12,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import se.iths.java24.spring25.filters.ApiKeyAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -19,11 +22,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .formLogin(Customizer.withDefaults())
+                //.formLogin( Customizer.withDefaults())
+                //.oauth2Login(Customizer.withDefaults())
+                .addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login","/error").permitAll()
                         .requestMatchers("/playgrounds/view").permitAll()
                         .requestMatchers("/playgrounds/add").authenticated()
+                        .requestMatchers("/api/playgrounds").hasRole("USER")
                         .anyRequest().denyAll()
                 );
 
