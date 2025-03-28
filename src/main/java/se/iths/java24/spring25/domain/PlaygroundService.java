@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import se.iths.java24.spring25.domain.entity.Playground;
+import se.iths.java24.spring25.filters.ApiKeyAuthenticationToken;
 import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service

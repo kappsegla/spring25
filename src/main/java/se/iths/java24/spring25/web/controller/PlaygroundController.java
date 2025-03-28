@@ -10,6 +10,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import se.iths.java24.spring25.domain.PlaygroundService;
 import se.iths.java24.spring25.domain.entity.Playground;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("/playgrounds")
 public class PlaygroundController {

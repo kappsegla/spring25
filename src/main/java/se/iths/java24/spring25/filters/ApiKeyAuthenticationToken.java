@@ -12,7 +12,7 @@ public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     public ApiKeyAuthenticationToken(String apiKey) {
         List<GrantedAuthority> authorities =
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER"));
         super(authorities);
         this.apiKey = apiKey;
         super.setAuthenticated(true);

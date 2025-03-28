@@ -10,7 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -124,7 +126,7 @@ public class PlaygroundControllerTest {
     }
 
     @Test
-    @WithMockUser(username="test")
+    @WithMockUser
     void addPlaygroundForm() throws IOException {
         // Verify the add playground form page
         HtmlPage page = htmlClient.getPage("/playgrounds/add");

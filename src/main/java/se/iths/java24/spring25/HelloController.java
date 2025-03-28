@@ -1,6 +1,8 @@
 package se.iths.java24.spring25;
 
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,12 @@ public class HelloController {
     @ResponseBody
     List<Playground> playground(Model model){
         return playgroundService.getAllPlaygrounds();
+    }
+
+    @GetMapping("/user")
+    @ResponseBody
+    String user(){
+        return "User: " + SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }
