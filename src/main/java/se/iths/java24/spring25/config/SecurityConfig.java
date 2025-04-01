@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/playgrounds/add").hasRole("USER")
                         .requestMatchers("/user").permitAll()
                         .requestMatchers("/graphiql").authenticated()
+                        .requestMatchers("/hello").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
                         .anyRequest().denyAll()
                 );

@@ -21,9 +21,11 @@ import java.util.List;
 public class HelloController {
 
     private final PlaygroundService playgroundService;
+    private final UUIDService uuidService;
 
-    public HelloController(PlaygroundService playgroundService) {
+    public HelloController(PlaygroundService playgroundService, UUIDService uuidService) {
         this.playgroundService = playgroundService;
+        this.uuidService = uuidService;
     }
 
     @GetMapping("/user")
@@ -35,6 +37,13 @@ public class HelloController {
     @Operation(summary = "Get current user")
     String user(){
         return "User: " + SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+
+
+    @GetMapping("/hello")
+    public String hello(){
+        return uuidService.getUUID().uuid();
     }
 
 }
