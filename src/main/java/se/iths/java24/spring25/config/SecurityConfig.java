@@ -3,9 +3,11 @@ package se.iths.java24.spring25.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,7 +33,9 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/error").permitAll()
                         .requestMatchers("/playgrounds/view").permitAll()
                         .requestMatchers("/playgrounds/add").hasRole("USER")
-                        .requestMatchers("/user").authenticated()
+                        .requestMatchers("/user").permitAll()
+                        .requestMatchers("/graphiql").authenticated()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
                         .anyRequest().denyAll()
                 );
 
@@ -41,10 +45,12 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     SecurityFilterChain api(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/**")
+        http.securityMatcher("/api/**","/graphql")
+                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/playgrounds").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/graphql").authenticated()
                         .anyRequest().denyAll()
                 );
         return http.build();

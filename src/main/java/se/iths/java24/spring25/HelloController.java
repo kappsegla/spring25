@@ -1,5 +1,10 @@
 package se.iths.java24.spring25;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
@@ -9,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import se.iths.java24.spring25.domain.PlaygroundService;
 import se.iths.java24.spring25.domain.entity.Playground;
 
+import java.awt.print.Book;
 import java.util.List;
 
-@Controller
+@RestController
 public class HelloController {
 
     private final PlaygroundService playgroundService;
@@ -20,21 +26,13 @@ public class HelloController {
         this.playgroundService = playgroundService;
     }
 
-    @GetMapping("/hello")
-    String hello(Model model){
-        model.addAttribute("message", "Hello, World!");
-        model.addAttribute("name","Martin");
-        return "hello";
-    }
-
-    @GetMapping("/api/playgrounds")
-    @ResponseBody
-    List<Playground> playground(Model model){
-        return playgroundService.getAllPlaygrounds();
-    }
-
     @GetMapping("/user")
-    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns current user",
+                    content = { @Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "400", description = "Invalid current user",
+                    content = @Content)})
+    @Operation(summary = "Get current user")
     String user(){
         return "User: " + SecurityContextHolder.getContext().getAuthentication().getName();
     }

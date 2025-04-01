@@ -30,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         //If new user add to database
         //If existing user update information
         // Check if the user exists in your local database
-k
+
         // Map local roles to GrantedAuthorities
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
