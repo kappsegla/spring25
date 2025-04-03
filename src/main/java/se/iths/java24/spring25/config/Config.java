@@ -1,13 +1,12 @@
 package se.iths.java24.spring25.config;
 
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.reactive.function.client.WebClient;
 import se.iths.java24.spring25.domain.entity.Playground;
 import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
@@ -16,6 +15,7 @@ import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 @Profile("!test")
 @EnableCaching
 @EnableRetry
+@EnableAsync
 public class Config {
     @Bean
     CommandLineRunner runner(PlaygroundRepository repository) {

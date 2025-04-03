@@ -1,6 +1,5 @@
 package se.iths.java24.spring25.domain;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +10,6 @@ import se.iths.java24.spring25.infrastructure.persistence.PlaygroundRepository;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +17,7 @@ import static org.mockito.Mockito.when;
 class PlaygroundServiceTest {
 
     @InjectMocks
-    PlaygroundService playgroundService;
+    PlaygroundServiceImpl playgroundService;
 
     @Mock
     PlaygroundRepository playgroundRepository;

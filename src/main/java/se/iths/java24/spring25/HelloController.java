@@ -2,20 +2,10 @@ package se.iths.java24.spring25;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import se.iths.java24.spring25.domain.PlaygroundService;
-import se.iths.java24.spring25.domain.entity.Playground;
-
-import java.awt.print.Book;
-import java.util.List;
 
 @RestController
 public class HelloController {
