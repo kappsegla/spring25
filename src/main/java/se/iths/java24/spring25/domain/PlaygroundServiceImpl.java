@@ -3,6 +3,7 @@ package se.iths.java24.spring25.domain;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
@@ -24,9 +25,12 @@ class PlaygroundServiceImpl implements PlaygroundService {
 
     ApplicationEventPublisher eventPublisher;
 
-    public PlaygroundServiceImpl(PlaygroundRepository playgroundRepository, ApplicationEventPublisher eventPublisher) {
+    RabbitTemplate rabbitTemplate;
+
+    public PlaygroundServiceImpl(PlaygroundRepository playgroundRepository, ApplicationEventPublisher eventPublisher, RabbitTemplate rabbitTemplate) {
         this.playgroundRepository = playgroundRepository;
         this.eventPublisher = eventPublisher;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     @Cacheable("allPlaygrounds")
@@ -49,6 +53,9 @@ class PlaygroundServiceImpl implements PlaygroundService {
         //Publish PlaygroundAddedEvent
         var event = new PlaygroundAddedEvent(this, pg, SecurityContextHolder.getContext().getAuthentication().getName());
         eventPublisher.publishEvent(event);
+
+        rabbitTemplate.convertAndSend("my-exchange", "routing-key", pg);
+
         return pg;
     }
 }

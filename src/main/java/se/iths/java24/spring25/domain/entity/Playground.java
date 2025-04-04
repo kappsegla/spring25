@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Playground {
+public class Playground implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
