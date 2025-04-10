@@ -39,7 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/user").permitAll()
                         .requestMatchers("/graphiql").authenticated()
                         .requestMatchers("/hello").permitAll()
+                        .requestMatchers("/info").authenticated()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
+                        .requestMatchers("/ai/**").permitAll()
                         .anyRequest().denyAll()
                 );
 
