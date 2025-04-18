@@ -1,5 +1,6 @@
 package se.iths.java24.spring25.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +20,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 import se.iths.java24.spring25.filters.ApiKeyAuthenticationFilter;
+import se.iths.java24.spring25.passkey.repository.DbPublicKeyCredentialUserEntityRepository;
+import se.iths.java24.spring25.passkey.repository.DbUserCredentialRepository;
+import se.iths.java24.spring25.passkey.repository.PasskeyCredentialRepository;
+import se.iths.java24.spring25.passkey.repository.PasskeyUserRepository;
+
+import java.util.Set;
 
 @Configuration
 @EnableMethodSecurity
@@ -29,10 +38,17 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .formLogin( Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .oauth2Login(Customizer.withDefaults())
+                .webAuthn((webAuthn) -> webAuthn
+                        .rpName("My Spring Security Passkey Example")
+                        .rpId("localhost") //Replace with the domainname of your application
+                        .allowedOrigins("http://localhost:8080") //Replace with the URL of your application. Notice: this _MUST_ be an HTTPS URL with a valid certificate
+                )
                 //.addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/custom-login").permitAll()
+                        .requestMatchers("/webauthn/**").permitAll()
                         .requestMatchers("/login", "/error").permitAll()
                         .requestMatchers("/playgrounds/view").permitAll()
                         .requestMatchers("/playgrounds/add").hasRole("USER")
@@ -40,18 +56,17 @@ public class SecurityConfig {
                         .requestMatchers("/graphiql").authenticated()
                         .requestMatchers("/hello").permitAll()
                         .requestMatchers("/info").authenticated()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/v3/api-docs.yaml").permitAll()
                         .requestMatchers("/ai/**").permitAll()
                         .anyRequest().denyAll()
                 );
-
         return http.build();
     }
 
     @Bean
     @Order(1)
     SecurityFilterChain api(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/**","/graphql")
+        http.securityMatcher("/api/**", "/graphql")
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterAfter(new ApiKeyAuthenticationFilter(), LogoutFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
@@ -82,5 +97,15 @@ public class SecurityConfig {
     public AuthorizationEventPublisher authorizationEventPublisher
             (ApplicationEventPublisher applicationEventPublisher) {
         return new SpringAuthorizationEventPublisher(applicationEventPublisher);
+    }
+
+    @Bean
+    PublicKeyCredentialUserEntityRepository userEntityRepository(PasskeyUserRepository userRepository) {
+        return new DbPublicKeyCredentialUserEntityRepository(userRepository);
+    }
+
+    @Bean
+    UserCredentialRepository userCredentialRepository(PasskeyUserRepository userRepository, PasskeyCredentialRepository credentialRepository) {
+        return new DbUserCredentialRepository(credentialRepository,userRepository);
     }
 }
