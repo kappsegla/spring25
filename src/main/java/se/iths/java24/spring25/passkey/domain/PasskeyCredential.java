@@ -2,6 +2,7 @@ package se.iths.java24.spring25.passkey.domain;
 
 import jakarta.persistence.*;
 import org.hibernate.proxy.HibernateProxy;
+import se.iths.java24.spring25.user.domain.User;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -17,7 +18,7 @@ public class PasskeyCredential {
 
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
-    private PasskeyUser user;
+    private User user;
 
     @Column(name = "LABEL")
     private String label;
@@ -25,10 +26,10 @@ public class PasskeyCredential {
     @Column(name = "CREDENTIAL_TYPE")
     private String credentialType;
 
-    @Column(name = "CREDENTIAL_ID")
+    @Column(name = "CREDENTIAL_ID", length = 4096)
     private String credentialId;
 
-    @Column(name = "PUBLIC_KEY_COSE")
+    @Column(name = "PUBLIC_KEY_COSE", length = 2048)
     private String publicKeyCose;
 
     @Column(name = "SIGNATURE_COUNT")
@@ -46,7 +47,7 @@ public class PasskeyCredential {
     @Column(name = "BACKUP_STATE")
     private Boolean backupState;
 
-    @Column(name = "ATTESTATION_OBJECT")
+    @Column(name = "ATTESTATION_OBJECT", length = 4096)  //Might be even longer?
     private String attestationObject;
 
     @Column(name = "LAST_USED")
@@ -63,11 +64,11 @@ public class PasskeyCredential {
         this.id = id;
     }
 
-    public PasskeyUser getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(PasskeyUser user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

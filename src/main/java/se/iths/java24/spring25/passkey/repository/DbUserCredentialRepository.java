@@ -5,14 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.web.webauthn.api.*;
 import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 import se.iths.java24.spring25.passkey.domain.PasskeyCredential;
-import se.iths.java24.spring25.passkey.domain.PasskeyUser;
+import se.iths.java24.spring25.user.domain.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-//@Slf4j
-//@RequiredArgsConstructor
-public class DbUserCredentialRepository  implements UserCredentialRepository {
+public class DbUserCredentialRepository implements UserCredentialRepository {
 
     private static Logger log = LoggerFactory.getLogger(DbUserCredentialRepository.class);
 
@@ -44,7 +42,7 @@ public class DbUserCredentialRepository  implements UserCredentialRepository {
                                     credentialRepository.save(toPasskeyCredential(credentialRecord, user))
                             );
 
-                    log.info("save: user={}, externalId={}, label={}", user.getName(), user.getExternalId(), credentialRecord.getLabel());
+                    log.info("save: user={}, externalId={}, label={}", user.getUsername(), user.getExternalId(), credentialRecord.getLabel());
                 });
     }
 
@@ -64,7 +62,7 @@ public class DbUserCredentialRepository  implements UserCredentialRepository {
     public List<CredentialRecord> findByUserId(Bytes userId) {
         log.info("findByUserId: userId={}", userId);
 
-        Optional<PasskeyUser> user = userEntityRepository.findByExternalId(userId.toBase64UrlString());
+        Optional<User> user = userEntityRepository.findByExternalId(userId.toBase64UrlString());
         return user.map(passkeyUser -> credentialRepository.findByUser(passkeyUser.getId())
                         .stream()
                         .map(cred -> toCredentialRecord(cred, Bytes.fromBase64(passkeyUser.getExternalId())))
@@ -92,7 +90,7 @@ public class DbUserCredentialRepository  implements UserCredentialRepository {
     }
 
     private static Set<AuthenticatorTransport> asTransportSet(String transports) {
-        if ( transports == null || transports.isEmpty() ) {
+        if (transports == null || transports.isEmpty()) {
             return Set.of();
         }
         return Set.of(transports.split(","))
@@ -101,7 +99,7 @@ public class DbUserCredentialRepository  implements UserCredentialRepository {
                 .collect(Collectors.toSet());
     }
 
-    private static PasskeyCredential toPasskeyCredential(PasskeyCredential credential, CredentialRecord credentialRecord, PasskeyUser user) {
+    private static PasskeyCredential toPasskeyCredential(PasskeyCredential credential, CredentialRecord credentialRecord, User user) {
         credential.setUser(user);
         credential.setLabel(credentialRecord.getLabel());
         credential.setCredentialType(credentialRecord.getCredentialType().getValue());
@@ -119,7 +117,7 @@ public class DbUserCredentialRepository  implements UserCredentialRepository {
         return credential;
     }
 
-    private static PasskeyCredential toPasskeyCredential(CredentialRecord credentialRecord, PasskeyUser user) {
-        return toPasskeyCredential(new PasskeyCredential(),credentialRecord,user);
+    private static PasskeyCredential toPasskeyCredential(CredentialRecord credentialRecord, User user) {
+        return toPasskeyCredential(new PasskeyCredential(), credentialRecord, user);
     }
 }

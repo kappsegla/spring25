@@ -1,6 +1,7 @@
 package se.iths.java24.spring25.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,32 +13,30 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
 import org.springframework.security.web.webauthn.management.UserCredentialRepository;
 import se.iths.java24.spring25.filters.ApiKeyAuthenticationFilter;
+import se.iths.java24.spring25.passkey.repository.PasskeyCredentialRepository;
 import se.iths.java24.spring25.passkey.repository.DbPublicKeyCredentialUserEntityRepository;
 import se.iths.java24.spring25.passkey.repository.DbUserCredentialRepository;
-import se.iths.java24.spring25.passkey.repository.PasskeyCredentialRepository;
 import se.iths.java24.spring25.passkey.repository.PasskeyUserRepository;
-
-import java.util.Set;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class); // Add logger
+
     @Bean
     @Order(2)
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
         http
+                .userDetailsService(userDetailsService)
                 .formLogin(Customizer.withDefaults())
                 .oauth2Login(Customizer.withDefaults())
                 .webAuthn((webAuthn) -> webAuthn
@@ -83,14 +82,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("martin")
-                .password("password")
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(user);
+    UserDetailsService userDetailsService(PasskeyUserRepository passkeyUserRepository) {
+        log.info(">>> Creating CustomUserDetailsService bean instance NOW.");
+        return new CustomUserDetailsService(passkeyUserRepository);
     }
 
     @Bean
@@ -100,12 +94,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    PublicKeyCredentialUserEntityRepository userEntityRepository(PasskeyUserRepository userRepository) {
-        return new DbPublicKeyCredentialUserEntityRepository(userRepository);
+    PublicKeyCredentialUserEntityRepository userEntityRepository(PasskeyUserRepository passkeyUserRepository) {
+        return new DbPublicKeyCredentialUserEntityRepository(passkeyUserRepository);
     }
 
     @Bean
-    UserCredentialRepository userCredentialRepository(PasskeyUserRepository userRepository, PasskeyCredentialRepository credentialRepository) {
-        return new DbUserCredentialRepository(credentialRepository,userRepository);
+    UserCredentialRepository userCredentialRepository(PasskeyUserRepository passkeyUserRepository, PasskeyCredentialRepository credentialRepository) {
+        return new DbUserCredentialRepository(credentialRepository, passkeyUserRepository);
     }
 }

@@ -6,8 +6,7 @@ import org.springframework.security.web.webauthn.api.Bytes;
 import org.springframework.security.web.webauthn.api.ImmutablePublicKeyCredentialUserEntity;
 import org.springframework.security.web.webauthn.api.PublicKeyCredentialUserEntity;
 import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
-import se.iths.java24.spring25.passkey.domain.PasskeyUser;
-
+import se.iths.java24.spring25.user.domain.User;
 
 
 public class DbPublicKeyCredentialUserEntityRepository implements PublicKeyCredentialUserEntityRepository {
@@ -32,7 +31,7 @@ public class DbPublicKeyCredentialUserEntityRepository implements PublicKeyCrede
     @Override
     public PublicKeyCredentialUserEntity findByUsername(String username) {
         log.info("findByUsername: username={}", username);
-        return userRepository.findByName(username)
+        return userRepository.findByUsername(username)
                 .map(DbPublicKeyCredentialUserEntityRepository::mapToUserEntity)
                 .orElse(null);
     }
@@ -41,10 +40,10 @@ public class DbPublicKeyCredentialUserEntityRepository implements PublicKeyCrede
     public void save(PublicKeyCredentialUserEntity userEntity) {
         log.info("save: username={}, externalId={}", userEntity.getName(),userEntity.getId().toBase64UrlString());
         var entity = userRepository.findByExternalId(userEntity.getId().toBase64UrlString())
-                .orElse(new PasskeyUser());
+                .orElse(new User());
 
         entity.setExternalId(userEntity.getId().toBase64UrlString());
-        entity.setName(userEntity.getName());
+        entity.setUsername(userEntity.getName());
         entity.setDisplayName(userEntity.getDisplayName());
 
         userRepository.save(entity);
@@ -57,10 +56,10 @@ public class DbPublicKeyCredentialUserEntityRepository implements PublicKeyCrede
                 .ifPresent(userRepository::delete);
     }
 
-    private static PublicKeyCredentialUserEntity mapToUserEntity(PasskeyUser user) {
+    private static PublicKeyCredentialUserEntity mapToUserEntity(User user) {
         return ImmutablePublicKeyCredentialUserEntity.builder()
                 .id(Bytes.fromBase64(user.getExternalId()))
-                .name(user.getName())
+                .name(user.getUsername())
                 .displayName(user.getDisplayName())
                 .build();
     }
